@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Parçacık Alanı</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0c0c16; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+
+    let scene, camera, renderer, particles;
+    let clock = new THREE.Clock();
+
+    // --- AYARLAR ---
+    const gridSize = 150;
+    const particleSpacing = 15;
+    const moveSpeed = 8;        // İlerleme hızı
+    const gridDepth = gridSize * particleSpacing; // Tarlanın toplam derinliği
+    
+    // *** DÜZELTME BURADA: particleCount global kapsama taşındı ***
+    const particleCount = gridSize * gridSize; 
+
+    // Macro Efekti Ayarları
+    const focusPoint = 400;     // Netliğin en yoğun olduğu mesafe
+    const focusRange = 300;     // Netliğin korunduğu alanın genişliği
+    const fadeDistance = 150;   // Yaklaşan parçacıkların ne kadar mesafede flulaşmaya başlayacağı
+
+    function init() {
+        scene = new THREE.Scene();
+
+        // Kamera
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, gridDepth);
+        camera.position.set(0, 70, 0); // Yüzeyin biraz üzerinde, başlangıç noktasında
+        camera.lookAt(0, 0, -focusPoint); // Odağı ileriye ver
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // --- PARÇACIK OLUŞTURMA ---
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+        const alphas = new Float32Array(particleCount); // Her parçacık için şeffaflık (alpha)
+
+        const colorPalette = [
+            new THREE.Color(0xffdAB9), // Soft Pastel Turuncu
+            new THREE.Color(0xa7d8de), // Soft Pastel Yeşil/Mavi
+            new THREE.Color(0xf0f0f0)  // Yumuşak Beyaz
+        ];
+
+        const totalWidth = (gridSize - 1) * particleSpacing;
+
+        for (let i = 0; i < gridSize; i++) { // Derinlik (z)
+            for (let j = 0; j < gridSize; j++) { // Genişlik (x)
+                const index = (i * gridSize + j);
+                const i3 = index * 3;
+
+                positions[i3] = j * particleSpacing - totalWidth / 2;
+                positions[i3 + 1] = 0; // Dalga ile değişecek
+                positions[i3 + 2] = -i * particleSpacing; // Kameranın önünde, uzağa doğru
+                
+                alphas[index] = 1.0;
+
+                // Rastgele renk ataması
+                const randomColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                colors[i3] = randomColor.r;
+                colors[i3 + 1] = randomColor.g;
+                colors[i3 + 2] = randomColor.b;
+            }
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1)); // Özel alpha değeri
+
+        // --- MATERYAL ---
+        const material = new THREE.PointsMaterial({
+            size: 8,
+            vertexColors: true,
+            transparent: true,
+            sizeAttenuation: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            alphaMap: createCircleTexture()
+        });
+        
+        // Shader'a müdahale ederek her parçacığa özel alpha atama
+        material.onBeforeCompile = shader => {
+            shader.vertexShader = `
+                attribute float alpha;
+                varying float vAlpha;
+                ${shader.vertexShader}
+            `.replace(`#include <begin_vertex>`, `#include <begin_vertex>\nvAlpha = alpha;`);
+            shader.fragmentShader = `
+                varying float vAlpha;
+                ${shader.fragmentShader}
+            `.replace(`vec4 diffuseColor = vec4( diffuse, opacity );`, `vec4 diffuseColor = vec4( diffuse, opacity * vAlpha );`);
+        };
+
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        window.addEventListener('resize', onWindowResize);
+        animate();
+    }
+
+    function createCircleTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128; canvas.height = 128;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(0.2, 'rgba(255,255,255,1)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 128, 128);
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const elapsedTime = clock.getElapsedTime();
+        const positions = particles.geometry.attributes.position.array;
+        const alphas = particles.geometry.attributes.alpha.array;
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+            
+            // 1. İLERİ HAREKET ve SONSUZ DÖNGÜ
+            positions[i3 + 2] += moveSpeed;
+            if (positions[i3 + 2] > camera.position.z) {
+                positions[i3 + 2] -= gridDepth;
+            }
+
+            // 2. DALGA EFEKTİ
+            const x = positions[i3];
+            const z = positions[i3 + 2];
+            positions[i3 + 1] = Math.sin((x + z) * 0.01 + elapsedTime) * 20;
+
+            // 3. MACRO / FLULAŞMA EFEKTİ
+            const dist = Math.abs(camera.position.z - z);
+            
+            if (dist > focusPoint + focusRange / 2) { // Odak noktasının uzağındaysa
+                 alphas[i] = 0.0;
+            } else if (dist < focusPoint - focusRange / 2) { // Odak noktasından daha yakındaysa
+                // Yaklaştıkça flulaşır (şeffaflaşır)
+                const fade = Math.max(0, (dist - (focusPoint - focusRange/2 - fadeDistance)) / fadeDistance);
+                alphas[i] = THREE.MathUtils.smoothstep(fade, 0, 1);
+            } else { // Odak alanı içindeyse
+                 alphas[i] = 1.0;
+            }
+        }
+        
+        particles.geometry.attributes.position.needsUpdate = true;
+        particles.geometry.attributes.alpha.needsUpdate = true;
+
+        renderer.render(scene, camera);
+    }
+
+    init();
+</script>
+
+</body>
+</html>
