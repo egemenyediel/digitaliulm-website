@@ -1,4 +1,4 @@
-import { Play, Pause, Volume2, VolumeX, ChevronDown } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { useState, useRef } from "react";
 
 interface VideoHeroProps {
@@ -6,9 +6,9 @@ interface VideoHeroProps {
 }
 
 export function VideoHero({ lang }: VideoHeroProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const togglePlay = () => {
@@ -16,7 +16,7 @@ export function VideoHero({ lang }: VideoHeroProps) {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        videoRef.current.play().catch(console.error);
       }
       setIsPlaying(!isPlaying);
     }
@@ -42,23 +42,34 @@ export function VideoHero({ lang }: VideoHeroProps) {
       <div 
         className="absolute inset-0 group"
         onMouseEnter={() => setShowControls(true)}
-        onMouseLeave={() => setShowControls(isPlaying ? false : true)}
+        onMouseLeave={() => setShowControls(false)}
       >
         <video
           ref={videoRef}
           className="w-full h-full object-cover"
-          poster="https://images.unsplash.com/photo-1630505331189-4ca903b81824?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlJTIwcm9ib3QlMjB0ZWNobm9sb2d5fGVufDF8fHx8MTc2MDE3ODE1OXww&ixlib=rb-4.1.0&q=80&w=1080"
           muted={isMuted}
           loop
+          autoPlay
           playsInline
+          onLoadedData={() => {
+            if (videoRef.current) {
+              videoRef.current.play().catch(() => {
+                // If autoplay fails, show play button
+                setIsPlaying(false);
+                setShowControls(true);
+              });
+            }
+          }}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
         >
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+          <source src="https://digitaliulm.de/assets/abstract-digital-particles-flow-digital-cyberspac-2025-08-29-11-16-08-utc.mp4" type="video/mp4" />
         </video>
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/40" />
 
-        {/* Play Overlay */}
+        {/* Play Overlay - Only show if video failed to autoplay */}
         {!isPlaying && (
           <div className="absolute inset-0 flex items-center justify-center">
             <button
