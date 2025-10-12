@@ -8,7 +8,16 @@ import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 
 export default function App() {
-  const [currentLang, setCurrentLang] = useState<'tr' | 'de' | 'en'>('tr');
+  // Browser diline göre varsayılan dil belirleme (Almanca öncelikli)
+  const getDefaultLanguage = (): 'tr' | 'de' | 'en' => {
+    const browserLang = navigator.language.toLowerCase();
+    if (browserLang.startsWith('de')) return 'de';
+    if (browserLang.startsWith('tr')) return 'tr';
+    if (browserLang.startsWith('en')) return 'en';
+    return 'de'; // Varsayılan Almanca
+  };
+
+  const [currentLang, setCurrentLang] = useState<'tr' | 'de' | 'en'>(() => getDefaultLanguage());
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">

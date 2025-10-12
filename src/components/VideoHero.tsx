@@ -14,22 +14,30 @@ export function VideoHero({ lang }: VideoHeroProps) {
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-[#0c0c16] via-[#1a1a2e] to-[#0c0c16]">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        {/* Floating Particles */}
-        <div className="absolute inset-0">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-[#BFFF0A] rounded-full opacity-70 animate-pulse"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${2 + Math.random() * 3}s`,
-              }}
-            />
-          ))}
+      {/* Animated Background - Camera Movement Effect */}
+      <div className="absolute inset-0 perspective-1000">
+        {/* Moving Particles with Camera Effect */}
+        <div className="absolute inset-0 transform-gpu">
+          {Array.from({ length: 80 }).map((_, i) => {
+            const depth = Math.random() * 1000 + 100;
+            const x = (Math.random() - 0.5) * 2000;
+            const y = (Math.random() - 0.5) * 1000;
+            return (
+              <div
+                key={i}
+                className="absolute bg-[#BFFF0A] rounded-full opacity-70"
+                style={{
+                  width: `${2 + (1000 - depth) / 100}px`,
+                  height: `${2 + (1000 - depth) / 100}px`,
+                  left: `${50 + (x / depth) * 50}%`,
+                  top: `${50 + (y / depth) * 50}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animation: `moveTowardsCamera ${3 + Math.random() * 2}s linear infinite`,
+                  transform: `translateZ(${depth}px)`,
+                }}
+              />
+            );
+          })}
         </div>
         
         {/* Moving Grid Lines */}
@@ -94,18 +102,52 @@ export function VideoHero({ lang }: VideoHeroProps) {
         </div>
       </div>
 
-      {/* Scroll Down Indicator */}
+      {/* Scroll Down Indicator - Right Side */}
       <button
         onClick={scrollToContent}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white hover:text-[#BFFF0A] transition-colors group z-10"
+        className="absolute bottom-8 right-8 w-12 h-12 rounded-full border-2 border-white/30 hover:border-[#BFFF0A] flex items-center justify-center text-white hover:text-[#BFFF0A] transition-all duration-300 group z-10 hover:scale-110"
       >
-        <span className="text-sm uppercase tracking-wider opacity-80">
-          {lang === 'tr' ? 'Aşağı Kaydır' : lang === 'de' ? 'Nach unten scrollen' : 'Scroll Down'}
-        </span>
-        <div className="w-6 h-10 rounded-full border-2 border-white/30 group-hover:border-[#BFFF0A] flex items-start justify-center p-2 transition-colors">
-          <ChevronDown className="w-4 h-4 animate-bounce" />
-        </div>
+        <ChevronDown className="w-6 h-6 animate-bounce group-hover:animate-pulse" />
       </button>
     </section>
   );
+}
+
+// CSS animasyonları için global stiller
+const styles = `
+  @keyframes moveTowardsCamera {
+    0% {
+      transform: translateZ(1000px) scale(0.1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.7;
+    }
+    90% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateZ(-100px) scale(2);
+      opacity: 0;
+    }
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-gpu {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+`;
+
+// Stilleri DOM'a ekle
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  if (!document.head.querySelector('style[data-hero-styles]')) {
+    styleSheet.setAttribute('data-hero-styles', 'true');
+    document.head.appendChild(styleSheet);
+  }
 }
