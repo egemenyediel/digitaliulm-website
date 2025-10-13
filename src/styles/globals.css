@@ -262,14 +262,7 @@ html {
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
+  /* VideoHero Animations */
 
 @keyframes fadeInUp {
   from {
@@ -300,4 +293,552 @@ html {
 
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out;
+}
+
+/* VideoHero Animations */
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes softGlow {
+  0%, 100% {
+    text-shadow: 0 0 3px rgba(191, 255, 10, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 8px rgba(191, 255, 10, 0.4);
+  }
+}
+
+.subtle-motion {
+  animation: subtleFloat 4s ease-in-out infinite, softGlow 3s ease-in-out infinite;
+}
+
+/* Space Velocity Effects */
+@keyframes velocityMove {
+  0% {
+    transform: translateZ(-2000px) translateX(0px) scale(0.1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateZ(0px) translateX(-20px) scale(1);
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateZ(2000px) translateX(-200px) scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes velocityStreak {
+  0% {
+    transform: translateX(-100px) scaleX(0);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(0px) scaleX(1);
+    opacity: 0.8;
+  }
+  80% {
+    transform: translateX(200px) scaleX(1.5);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(500px) scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes warpPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.1;
+  }
+  25% {
+    transform: scale(1.1) rotate(90deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(0.9) rotate(180deg);
+    opacity: 0.2;
+  }
+  75% {
+    transform: scale(1.05) rotate(270deg);
+    opacity: 0.25;
+  }
+}
+
+@keyframes spaceShake {
+  0%, 100% {
+    transform: translateX(0) translateY(0) rotateZ(0deg);
+  }
+  10% {
+    transform: translateX(-2px) translateY(-1px) rotateZ(-0.2deg);
+  }
+  20% {
+    transform: translateX(2px) translateY(1px) rotateZ(0.2deg);
+  }
+  30% {
+    transform: translateX(-1px) translateY(2px) rotateZ(-0.1deg);
+  }
+  40% {
+    transform: translateX(1px) translateY(-2px) rotateZ(0.1deg);
+  }
+  50% {
+    transform: translateX(-2px) translateY(-1px) rotateZ(-0.2deg);
+  }
+  60% {
+    transform: translateX(2px) translateY(1px) rotateZ(0.2deg);
+  }
+  70% {
+    transform: translateX(-1px) translateY(-1px) rotateZ(-0.1deg);
+  }
+  80% {
+    transform: translateX(1px) translateY(2px) rotateZ(0.1deg);
+  }
+  90% {
+    transform: translateX(-1px) translateY(-2px) rotateZ(-0.1deg);
+  }
+}
+
+@keyframes velocityGlow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(191, 255, 10, 0.3), 0 0 10px rgba(191, 255, 10, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(191, 255, 10, 0.8), 0 0 40px rgba(191, 255, 10, 0.4), 0 0 60px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Velocity Effect Classes */
+.velocity-star {
+  animation: velocityMove 3s linear infinite;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+}
+
+.velocity-line {
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(to bottom, transparent, rgba(191, 255, 10, 0.8), transparent);
+  animation: velocityStreak 2s linear infinite;
+  transform-origin: top center;
+}
+
+.warp-field {
+  background: radial-gradient(circle at center, rgba(191, 255, 10, 0.1) 0%, transparent 70%);
+  animation: warpPulse 4s ease-in-out infinite;
+}
+
+.space-velocity-text {
+  animation: spaceShake 0.15s infinite, velocityGlow 2s ease-in-out infinite;
+}
+
+.space-velocity-subtitle {
+  animation: spaceShake 0.2s infinite reverse;
+}
+
+.space-velocity-button {
+  animation: spaceShake 0.25s infinite;
+}
+
+.space-velocity-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Space Movement Animations */
+@keyframes spaceMovementRandom {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate(50px, -30px) rotate(90deg);
+  }
+  50% {
+    transform: translate(-40px, 60px) rotate(180deg);
+  }
+  75% {
+    transform: translate(30px, -50px) rotate(270deg);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-60px, 40px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes leftSideMovement {
+  0% {
+    transform: translateX(-50px) translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px) translateY(50vh) rotate(180deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100px) translateY(-50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rightSideMovement {
+  0% {
+    transform: translateX(50px) translateY(-50px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-20px) translateY(50vh) rotate(-180deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100px) translateY(100vh) rotate(-360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes atmosphereFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-5px) translateX(-8px);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translateY(-15px) translateX(3px);
+    opacity: 0.5;
+  }
+}
+
+/* Space Movement Classes */
+.space-movement-dot {
+  animation: spaceMovementRandom 6s linear infinite;
+}
+
+.left-side-star {
+  animation: leftSideMovement 5s linear infinite;
+}
+
+.right-side-star {
+  animation: rightSideMovement 5s linear infinite;
+}
+
+.atmosphere-particles div {
+  animation: atmosphereFloat 4s ease-in-out infinite;
+}
+
+/* Spaceship Camera View Effects */
+.space-camera-view {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, var(--tw-gradient-stops));
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes movingStar {
+  0% {
+    transform: translateZ(-2000px) translateY(-100vh) scale(0.1);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateZ(0px) translateY(50vh) scale(1);
+    opacity: 1;
+  }
+  95% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateZ(2000px) translateY(200vh) scale(8);
+    opacity: 0;
+  }
+}
+
+@keyframes continuousForwardMovement {
+  0% {
+    transform: translateZ(-3000px) scale(0.05);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(1500px) scale(10);
+    opacity: 0;
+  }
+}
+
+@keyframes speedParticles {
+  0% {
+    transform: translateZ(-1500px) translateX(var(--random-x)) translateY(var(--random-y)) scale(0.2);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(1000px) translateX(calc(var(--random-x) * 3)) translateY(calc(var(--random-y) * 3)) scale(5);
+    opacity: 0;
+  }
+}
+
+@keyframes galaxyPulse {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1) rotate(180deg);
+  }
+}
+
+@keyframes motionStreak {
+  0% {
+    transform: translateZ(-500px) translateY(-100vh) scaleY(0) scaleX(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+    transform: translateZ(-200px) translateY(-20vh) scaleY(0.5) scaleX(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateZ(0px) translateY(50vh) scaleY(1) scaleX(1.5);
+  }
+  80% {
+    opacity: 0.8;
+    transform: translateZ(300px) translateY(120vh) scaleY(1.5) scaleX(2);
+  }
+  100% {
+    transform: translateZ(600px) translateY(200vh) scaleY(0) scaleX(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes warpSpeed {
+  0% {
+    transform: translateZ(-2000px) scale(0.1);
+    opacity: 0;
+    filter: blur(0px);
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateZ(0px) scale(1);
+    filter: blur(1px);
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(3000px) scale(15);
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
+@keyframes hudScan {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Spaceship Effects Classes */
+.star-twinkle {
+  animation: starTwinkle 3s ease-in-out infinite;
+}
+
+.moving-star {
+  animation: movingStar 4s linear infinite;
+}
+
+.continuous-forward-star {
+  width: 1px;
+  height: 1px;
+  animation: continuousForwardMovement 4s linear infinite;
+}
+
+.speed-particle {
+  width: 1px;
+  height: 1px;
+  animation: speedParticles 3s linear infinite;
+  box-shadow: 0 0 4px #BFFF0A;
+}
+
+.warp-speed-particle {
+  width: 2px;
+  height: 2px;
+  animation: warpSpeed 5s linear infinite;
+  box-shadow: 0 0 6px rgba(100, 150, 255, 0.8);
+}
+
+.galaxy-glow {
+  animation: galaxyPulse 8s ease-in-out infinite;
+}
+
+.motion-line {
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(191, 255, 10, 0.8) 20%, 
+    rgba(255, 255, 255, 0.9) 50%, 
+    rgba(191, 255, 10, 0.8) 80%, 
+    transparent 100%);
+  animation: motionStreak 1.5s linear infinite;
+}
+
+.enhanced-motion-line {
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.9) 30%, 
+    rgba(191, 255, 10, 1) 50%, 
+    rgba(255, 255, 255, 0.9) 70%, 
+    transparent 100%);
+  animation: motionStreak 1s linear infinite;
+  filter: blur(0.5px);
+}
+
+.side-motion-streak {
+  width: 3px;
+  height: 100px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(191, 255, 10, 0.6) 20%, 
+    rgba(255, 255, 255, 0.8) 50%, 
+    rgba(191, 255, 10, 0.6) 80%, 
+    transparent 100%);
+  animation: motionStreak 1.2s linear infinite;
+}
+
+.left-streak {
+  transform: rotate(-15deg);
+}
+
+.right-streak {
+  transform: rotate(15deg);
+}
+
+.spaceship-hud {
+  animation: hudScan 2s ease-in-out infinite;
+}
+
+.spaceship-hud::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgba(191, 255, 10, 0.1);
+  pointer-events: none;
+}
+
+/* Continuous Movement Effects */
+@keyframes continuousMovement {
+  0% {
+    transform: translateZ(0px);
+  }
+  100% {
+    transform: translateZ(500px);
+  }
+}
+
+@keyframes backgroundShift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+/* Scroll-based parallax effects */
+.star-field {
+  will-change: transform;
+}
+
+.motion-lines {
+  will-change: transform;
+}
+
+.continuous-movement {
+  animation: continuousMovement 20s linear infinite;
+}
+
+/* Enhanced HUD with movement feedback */
+.spaceship-hud {
+  animation: hudScan 2s ease-in-out infinite;
+}
+
+.spaceship-hud::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 48%, rgba(191, 255, 10, 0.1) 49%, rgba(191, 255, 10, 0.1) 51%, transparent 52%);
+  animation: backgroundShift 3s linear infinite;
+  pointer-events: none;
 }

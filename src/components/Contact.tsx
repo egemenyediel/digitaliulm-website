@@ -1,12 +1,24 @@
+import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { loadContent, ContactInfo } from '../utils/contentManager';
 
 interface ContactProps {
   lang: 'tr' | 'de' | 'en';
 }
 
 export function Contact({ lang }: ContactProps) {
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+
+  useEffect(() => {
+    loadContent().then(content => {
+      if (content) {
+        setContactInfo(content.contact);
+      }
+    });
+  }, []);
+
   const translations = {
     tr: {
       subtitle: 'İletişim',
@@ -39,13 +51,18 @@ export function Contact({ lang }: ContactProps) {
 
   const t = translations[lang];
 
+  if (!contactInfo) return null;
+
   return (
     <section id="contact" className="py-24 md:py-32 relative">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+      {/* Semi-transparent overlay for readability */}
+      <div className="absolute inset-0 bg-black/15 backdrop-blur-sm" />
+      
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block mb-4">
-            <span className="text-sm px-4 py-2 rounded-full bg-[#BFFF0A]/10 text-[#BFFF0A] border border-[#BFFF0A]/20">
+            <span className="text-sm px-4 py-2 rounded-full bg-[#0EA5E9]/10 text-[#0EA5E9] border border-[#0EA5E9]/20">
               {t.subtitle}
             </span>
           </div>
@@ -64,26 +81,26 @@ export function Contact({ lang }: ContactProps) {
               <div>
                 <Input 
                   placeholder={t.name}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl h-12 focus:border-[#BFFF0A] focus:ring-[#BFFF0A]"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl h-12 focus:border-[#0EA5E9] focus:ring-[#0EA5E9]"
                 />
               </div>
               <div>
                 <Input 
                   type="email" 
                   placeholder={t.email}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl h-12 focus:border-[#BFFF0A] focus:ring-[#BFFF0A]"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl h-12 focus:border-[#0EA5E9] focus:ring-[#0EA5E9]"
                 />
               </div>
               <div>
                 <Textarea 
                   placeholder={t.message} 
                   rows={6}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl resize-none focus:border-[#BFFF0A] focus:ring-[#BFFF0A]"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/40 rounded-xl resize-none focus:border-[#0EA5E9] focus:ring-[#0EA5E9]"
                 />
               </div>
               <button 
                 type="submit"
-                className="group w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#BFFF0A] text-black rounded-full hover:bg-[#a8e609] transition-all duration-300 shadow-[0_0_30px_rgba(191,255,10,0.3)] hover:shadow-[0_0_40px_rgba(191,255,10,0.5)]"
+                className="group w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#0EA5E9] text-white rounded-full hover:bg-[#0284c7] transition-all duration-300 shadow-[0_0_30px_rgba(14,165,233,0.3)] hover:shadow-[0_0_40px_rgba(14,165,233,0.5)]"
               >
                 <span className="font-medium">{t.send}</span>
                 <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -95,40 +112,40 @@ export function Contact({ lang }: ContactProps) {
           <div className="space-y-6">
             <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#BFFF0A]/10 border border-[#BFFF0A]/20 flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-6 h-6 text-[#BFFF0A]" />
+                <div className="w-12 h-12 rounded-xl bg-[#0EA5E9]/10 border border-[#0EA5E9]/20 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-6 h-6 text-[#0EA5E9]" />
                 </div>
                 <div>
                   <p className="text-sm text-white/60 mb-1">Email</p>
-                  <p className="text-white">info@digitaliulm.de</p>
+                  <p className="text-white">{contactInfo.email}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#BFFF0A]/10 border border-[#BFFF0A]/20 flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-6 h-6 text-[#BFFF0A]" />
+                <div className="w-12 h-12 rounded-xl bg-[#0EA5E9]/10 border border-[#0EA5E9]/20 flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6 text-[#0EA5E9]" />
                 </div>
                 <div>
                   <p className="text-sm text-white/60 mb-1">
                     {lang === 'tr' ? 'Telefon' : lang === 'de' ? 'Telefon' : 'Phone'}
                   </p>
-                  <p className="text-white">+49 731 XXX XXXX</p>
+                  <p className="text-white">{contactInfo.phone}</p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#BFFF0A]/10 border border-[#BFFF0A]/20 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-[#BFFF0A]" />
+                <div className="w-12 h-12 rounded-xl bg-[#0EA5E9]/10 border border-[#0EA5E9]/20 flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-[#0EA5E9]" />
                 </div>
                 <div>
                   <p className="text-sm text-white/60 mb-1">
                     {lang === 'tr' ? 'Adres' : lang === 'de' ? 'Adresse' : 'Address'}
                   </p>
-                  <p className="text-white">Ulm, Deutschland</p>
+                  <p className="text-white">{contactInfo.address[lang]}</p>
                 </div>
               </div>
             </div>

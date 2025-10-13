@@ -105,7 +105,10 @@ export function Applications({ lang }: ApplicationsProps) {
 
   return (
     <section id="applications" className="py-24 md:py-32 relative">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
+      {/* Semi-transparent overlay for readability */}
+      <div className="absolute inset-0 bg-black/15 backdrop-blur-sm" />
+      
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 relative z-10">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-block mb-4">
