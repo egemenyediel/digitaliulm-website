@@ -77,8 +77,7 @@ Admin panele erişim: `http://localhost:3000/#admin`
 
 Web sitesi https://digitaliulm.de/ içerikleriyle yüklenmiştir:
 - 13 Dijital Çözüm/Hizmet
-- 4 Referans Proje (BLUNU, Mediterran Tuana, Mavi Event Hall, Demir Taş Seramik)
-- İletişim: info@digitaliulm.de, +49 731 XXX XXXX
+
 
 ## 💾 İçerik Yönetimi
 
