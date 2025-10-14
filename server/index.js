@@ -42,6 +42,13 @@ app.post('/api/content', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Content API server running on http://localhost:${PORT}`);
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Bind to 0.0.0.0 for Render.com deployment
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Content API server running on port ${PORT}`);
+  console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
