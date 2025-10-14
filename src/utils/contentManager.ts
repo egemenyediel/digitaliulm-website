@@ -341,7 +341,9 @@ const defaultContent: SiteContent = {
 };
 
 const STORAGE_KEY = 'digitaliulm_content';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Backend base URL
+const API_URL = (import.meta as any).env?.VITE_API_URL || (typeof window === 'undefined' ? process.env.VITE_API_URL : undefined) || 'http://localhost:3001/api';
+console.debug('[contentManager] API_URL =', API_URL);
 
 // Content'i localStorage ve API'ye kaydet
 export const saveContent = async (content: SiteContent): Promise<void> => {
@@ -425,8 +427,13 @@ export const loadContentSync = (): SiteContent => {
 export const initializeContent = (): void => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (!stored) {
-    saveContent(defaultContent);
-    console.log('🎉 Content initialized with defaults');
+    // Sadece localStorage'a default içerik yaz (sunucuya POST etme)
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultContent, null, 2));
+      console.log('🎉 Defaults cached locally');
+    } catch (e) {
+      console.warn('⚠️ Could not seed local defaults', e);
+    }
   }
 };
 
