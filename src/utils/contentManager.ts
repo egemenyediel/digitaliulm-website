@@ -340,101 +340,49 @@ const defaultContent: SiteContent = {
   lastUpdated: new Date().toISOString()
 };
 
-const STORAGE_KEY = 'digitaliulm_content';
 // Backend base URL
 const API_URL = (import.meta as any).env?.VITE_API_URL || (typeof window === 'undefined' ? process.env.VITE_API_URL : undefined) || 'http://localhost:3001/api';
 console.debug('[contentManager] API_URL =', API_URL);
 
 // Content'i localStorage ve API'ye kaydet
 export const saveContent = async (content: SiteContent): Promise<void> => {
-  try {
-    content.lastUpdated = new Date().toISOString();
-    
-    // Önce localStorage'a kaydet (hızlı)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(content, null, 2));
-    
-    // Sonra API'ye gönder (kalıcı)
-    try {
-      const response = await fetch(`${API_URL}/content`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(content),
-      });
-      
-      if (response.ok) {
-        console.log('✅ Content saved to server');
-      } else {
-        console.warn('⚠️ Content saved locally but server update failed');
-      }
-    } catch (apiError) {
-      console.warn('⚠️ Server not available, content saved locally only');
-    }
-    
-    console.log('✅ Content saved successfully');
-  } catch (error) {
-    console.error('❌ Error saving content:', error);
+  content.lastUpdated = new Date().toISOString();
+  const response = await fetch(`${API_URL}/content`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(content),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to save content: ${response.status}`);
   }
+  console.log('✅ Content saved to server');
 };
 
 // Content'i API'den veya localStorage'dan oku
 export const loadContent = async (): Promise<SiteContent> => {
   try {
-    // Önce API'den dene
     const response = await fetch(`${API_URL}/content`);
-    if (response.ok) {
-      const content = await response.json();
-      console.log('✅ Content loaded from server');
-      // localStorage'a da kaydet (cache)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(content, null, 2));
-      return content;
-    }
-  } catch (apiError) {
-    console.warn('⚠️ Server not available, trying localStorage');
-  }
-  
-  // API başarısız olursa localStorage'dan oku
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const content = JSON.parse(stored);
-      console.log('✅ Content loaded from localStorage');
-      return content;
-    }
+    if (!response.ok) throw new Error(String(response.status));
+    const content = await response.json();
+    console.log('✅ Content loaded from server');
+    return content;
   } catch (error) {
-    console.error('❌ Error loading content:', error);
+    console.error('❌ Error loading content from server:', error);
+    console.log('📝 Falling back to default content');
+    return defaultContent;
   }
-  
-  console.log('📝 Using default content');
-  return defaultContent;
 };
 
 // Senkron versiyon (geriye dönük uyumluluk için)
 export const loadContentSync = (): SiteContent => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('❌ Error loading content:', error);
-  }
+  // LocalStorage kaldırıldı; senkron gereksinimler için varsayılan içerik döndürülür.
   return defaultContent;
 };
 
 // İlk yüklemede default content'i kaydet
 export const initializeContent = (): void => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    // Sadece localStorage'a default içerik yaz (sunucuya POST etme)
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultContent, null, 2));
-      console.log('🎉 Defaults cached locally');
-    } catch (e) {
-      console.warn('⚠️ Could not seed local defaults', e);
-    }
-  }
+  // Local initialization removed; always rely on server data.
+  console.debug('initializeContent skipped');
 };
 
 // Content'i dışa aktar (JSON dosyası olarak indir)
@@ -482,28 +430,28 @@ export const importContent = (file: File): Promise<void> => {
 
 // Hero content'i güncelle
 export const updateHeroContent = async (hero: HeroContent): Promise<void> => {
-  const content = loadContentSync();
+  const content = await loadContent();
   content.hero = hero;
   await saveContent(content);
 };
 
 // Solutions'ı güncelle
 export const updateSolutions = async (solutions: Solution[]): Promise<void> => {
-  const content = loadContentSync();
+  const content = await loadContent();
   content.solutions = solutions;
   await saveContent(content);
 };
 
 // References'ı güncelle
 export const updateReferences = async (references: Reference[]): Promise<void> => {
-  const content = loadContentSync();
+  const content = await loadContent();
   content.references = references;
   await saveContent(content);
 };
 
 // Contact'ı güncelle
 export const updateContact = async (contact: ContactInfo): Promise<void> => {
-  const content = loadContentSync();
+  const content = await loadContent();
   content.contact = contact;
   await saveContent(content);
 };

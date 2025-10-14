@@ -7,7 +7,7 @@ import { ChatWidget } from "./components/ChatWidget";
 import { Footer } from "./components/Footer";
 import { AdminLogin } from "./pages/AdminLogin";
 import { AdminPanel } from "./pages/AdminPanel";
-import { initializeContent } from "./utils/contentManager";
+// initializeContent kaldırıldı; içerik doğrudan sunucudan yüklenecek
 
 export default function App() {
   // Browser diline göre varsayılan dil belirleme (Almanca öncelikli)
@@ -23,10 +23,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'admin-login' | 'admin-panel'>('home');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Content'i initialize et
-  useEffect(() => {
-    initializeContent();
-  }, []);
+  // İçerik artık sunucudan yüklenecek (bileşenler loadContent çağırıyor)
 
   // URL hash'e göre sayfa yönetimi
   useEffect(() => {
