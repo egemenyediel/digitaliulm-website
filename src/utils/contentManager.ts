@@ -438,8 +438,8 @@ export const initializeContent = (): void => {
 };
 
 // Content'i dışa aktar (JSON dosyası olarak indir)
-export const exportContent = (): void => {
-  const content = loadContent();
+export const exportContent = async (): Promise<void> => {
+  const content = await loadContent();
   const dataStr = JSON.stringify(content, null, 2);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
   const url = URL.createObjectURL(dataBlob);
