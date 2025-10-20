@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { 
   LogOut, 
   Home, 
@@ -74,49 +75,95 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
   ];
 
   const handleSaveHero = async () => {
-    await updateHeroContent(heroContent);
-    setLastSaved(new Date().toISOString());
-    alert('✅ Ana sayfa içeriği kaydedildi ve sunucuya gönderildi!');
+    try {
+      await updateHeroContent(heroContent);
+      setLastSaved(new Date().toISOString());
+      toast.success('Ana sayfa içeriği başarıyla kaydedildi!', {
+        description: 'Değişiklikler veritabanına gönderildi.',
+      });
+    } catch (error) {
+      toast.error('Hata oluştu!', {
+        description: 'Ana sayfa kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      });
+    }
   };
 
   const handleSaveSolutions = async () => {
-    await updateSolutions(solutions);
-    setLastSaved(new Date().toISOString());
-    alert('✅ Çözümler kaydedildi ve sunucuya gönderildi!');
+    try {
+      await updateSolutions(solutions);
+      setLastSaved(new Date().toISOString());
+      toast.success('Çözümler başarıyla kaydedildi!', {
+        description: `${solutions.length} çözüm veritabanına gönderildi.`,
+      });
+    } catch (error) {
+      toast.error('Hata oluştu!', {
+        description: 'Çözümler kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      });
+    }
   };
 
   const handleSaveReferences = async () => {
-    await updateReferences(references);
-    setLastSaved(new Date().toISOString());
-    alert('✅ Referanslar kaydedildi ve sunucuya gönderildi!');
+    try {
+      await updateReferences(references);
+      setLastSaved(new Date().toISOString());
+      toast.success('Referanslar başarıyla kaydedildi!', {
+        description: `${references.length} referans veritabanına gönderildi.`,
+      });
+    } catch (error) {
+      toast.error('Hata oluştu!', {
+        description: 'Referanslar kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      });
+    }
   };
 
   const handleSaveContact = async () => {
-    await updateContact(contactInfo);
-    setLastSaved(new Date().toISOString());
-    alert('✅ İletişim bilgileri kaydedildi ve sunucuya gönderildi!');
+    try {
+      await updateContact(contactInfo);
+      setLastSaved(new Date().toISOString());
+      toast.success('İletişim bilgileri başarıyla kaydedildi!', {
+        description: 'Değişiklikler veritabanına gönderildi.',
+      });
+    } catch (error) {
+      toast.error('Hata oluştu!', {
+        description: 'İletişim bilgileri kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      });
+    }
   };
 
   const handleExport = () => {
-    exportContent();
-    alert('📥 İçerik JSON dosyası olarak indirildi!');
+    try {
+      exportContent();
+      toast.success('İçerik başarıyla indirildi!', {
+        description: 'JSON dosyası indirilme klasörünüze kaydedildi.',
+      });
+    } catch (error) {
+      toast.error('Hata oluştu!', {
+        description: 'İçerik indirilemedi: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+      });
+    }
   };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      importContent(file).then(() => {
-        loadContent().then(content => {
-          setHeroContent(content.hero);
-          setSolutions(content.solutions);
-          setReferences(content.references);
-          setContactInfo(content.contact);
-          setLastSaved(content.lastUpdated);
-          alert('📤 İçerik başarıyla yüklendi!');
+      importContent(file)
+        .then(() => {
+          return loadContent().then(content => {
+            setHeroContent(content.hero);
+            setSolutions(content.solutions);
+            setReferences(content.references);
+            setContactInfo(content.contact);
+            setLastSaved(content.lastUpdated);
+            toast.success('İçerik başarıyla yüklendi!', {
+              description: 'Dosyadaki tüm içerik veritabanına kaydedildi.',
+            });
+          });
+        })
+        .catch((error) => {
+          toast.error('Hata oluştu!', {
+            description: 'İçerik yüklenirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+          });
         });
-      }).catch(() => {
-        alert('❌ İçerik yüklenirken hata oluştu!');
-      });
     }
   };
 
@@ -158,9 +205,33 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
   };
 
   const handleDeleteSolution = (id: string) => {
-    if (confirm('Bu çözümü silmek istediğinize emin misiniz?')) {
-      setSolutions(solutions.filter(solution => solution.id !== id));
-    }
+    const solution = solutions.find(s => s.id === id);
+    toast.custom((t) => (
+      <div className="bg-white rounded-lg shadow-lg p-4 border-l-4 border-red-500">
+        <p className="font-semibold text-gray-900">Silmek istediğinize emin misiniz?</p>
+        <p className="text-sm text-gray-600 mt-1">"{solution?.title.tr}" silinecek</p>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => {
+              setSolutions(solutions.filter(solution => solution.id !== id));
+              toast.dismiss(t);
+              toast.success('Çözüm silindi!', {
+                description: 'Çözüm başarıyla silindi.',
+              });
+            }}
+            className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+          >
+            Sil
+          </button>
+          <button
+            onClick={() => toast.dismiss(t)}
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded text-sm hover:bg-gray-300"
+          >
+            İptal
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   // References Handlers
@@ -201,9 +272,33 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
   };
 
   const handleDeleteReference = (id: string) => {
-    if (confirm('Bu referansı silmek istediğinize emin misiniz?')) {
-      setReferences(references.filter(reference => reference.id !== id));
-    }
+    const reference = references.find(r => r.id === id);
+    toast.custom((t) => (
+      <div className="bg-white rounded-lg shadow-lg p-4 border-l-4 border-red-500">
+        <p className="font-semibold text-gray-900">Silmek istediğinize emin misiniz?</p>
+        <p className="text-sm text-gray-600 mt-1">"{reference?.name.tr}" silinecek</p>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => {
+              setReferences(references.filter(reference => reference.id !== id));
+              toast.dismiss(t);
+              toast.success('Referans silindi!', {
+                description: 'Referans başarıyla silindi.',
+              });
+            }}
+            className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+          >
+            Sil
+          </button>
+          <button
+            onClick={() => toast.dismiss(t)}
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded text-sm hover:bg-gray-300"
+          >
+            İptal
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   return (

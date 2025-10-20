@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Toaster } from "sonner";
 import { Header } from "./components/Header";
 import { TopProgressBar } from "./components/TopProgressBar";
 import { VideoHero } from "./components/VideoHero";
@@ -68,6 +69,12 @@ export default function App() {
   // Ana sayfa
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <Toaster 
+        position="top-right" 
+        theme="light"
+        richColors
+        expand
+      />
       <TopProgressBar />
       {/* Video Background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
