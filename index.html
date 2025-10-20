@@ -11,6 +11,10 @@
 
     <body>
       <div id="root"></div>
+      <script>
+        // Inject build timestamp at runtime
+        window.__BUILD_TIME__ = new Date().toISOString();
+      </script>
       <script type="module" src="/src/main.tsx"></script>
     </body>
   </html>

@@ -14,7 +14,8 @@ export function Footer({ lang }: FooterProps) {
       about: 'Hakkımızda',
       blog: 'Blog',
       careers: 'Kariyer',
-      privacy: 'Gizlilik Politikası'
+      privacy: 'Gizlilik Politikası',
+      deployedAt: 'Deploy Tarihi'
     },
     de: {
       tagline: 'Eine digitalere Welt mit künstlicher Intelligenz',
@@ -24,7 +25,8 @@ export function Footer({ lang }: FooterProps) {
       about: 'Über uns',
       blog: 'Blog',
       careers: 'Karriere',
-      privacy: 'Datenschutz'
+      privacy: 'Datenschutz',
+      deployedAt: 'Deploy-Datum'
     },
     en: {
       tagline: 'A more digital world with artificial intelligence',
@@ -34,11 +36,18 @@ export function Footer({ lang }: FooterProps) {
       about: 'About Us',
       blog: 'Blog',
       careers: 'Careers',
-      privacy: 'Privacy Policy'
+      privacy: 'Privacy Policy',
+      deployedAt: 'Deploy Date'
     }
   };
 
   const t = translations[lang];
+  
+  // Get build timestamp from window or use current time
+  const buildTime = (window as any).__BUILD_TIME__ || new Date().toISOString();
+  const formattedTime = new Date(buildTime).toLocaleString(
+    lang === 'tr' ? 'tr-TR' : lang === 'de' ? 'de-DE' : 'en-US'
+  );
 
   return (
     <footer className="relative border-t border-white/10 mt-24">
@@ -140,7 +149,7 @@ export function Footer({ lang }: FooterProps) {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <p>&copy; {new Date().getFullYear()} digitaliulm.de. {t.rights}</p>
             <a 
               href="#admin" 
@@ -148,6 +157,10 @@ export function Footer({ lang }: FooterProps) {
             >
               Panel
             </a>
+            <span className="text-white/30">•</span>
+            <span className="text-xs text-white/40">
+              {t.deployedAt}: <span className="text-[#0EA5E9]">{formattedTime}</span>
+            </span>
           </div>
           <p>Made with <span className="text-[#0EA5E9]">♥</span> in Ulm</p>
         </div>
