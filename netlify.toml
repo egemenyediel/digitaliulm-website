@@ -4,7 +4,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  DATABASE_URL = "postgresql://neondb_owner:npg_IrBnKAc7aF3V@ep-solitary-heart-aejqmo4s-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  DATABASE_URL = "postgresql://neondb_owner:npg_Bw5WKgRaFXo0@ep-twilight-boat-a9crisxh-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 # Netlify Functions configuration
 [functions]
