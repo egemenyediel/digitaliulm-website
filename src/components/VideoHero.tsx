@@ -33,8 +33,7 @@ export function VideoHero({ lang }: VideoHeroProps) {
   return (
     <section className="relative h-screen w-full overflow-hidden">
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 bg-black/20" />
+  {/* Overlay removed to show full video brightness */}
 
       {/* Content Overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">

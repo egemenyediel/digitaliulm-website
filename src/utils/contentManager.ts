@@ -1,3 +1,4 @@
+import { startLoading, endLoading } from './loading';
 // Content Management System - Local Storage ile çalışır
 // Production'da bu bir API olacak
 
@@ -346,20 +347,26 @@ console.debug('[contentManager] API_URL =', API_URL);
 
 // Content'i localStorage ve API'ye kaydet
 export const saveContent = async (content: SiteContent): Promise<void> => {
-  content.lastUpdated = new Date().toISOString();
-  const response = await fetch(`${API_URL}/content`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(content),
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to save content: ${response.status}`);
+  startLoading();
+  try {
+    content.lastUpdated = new Date().toISOString();
+    const response = await fetch(`${API_URL}/content`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(content),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to save content: ${response.status}`);
+    }
+    console.log('✅ Content saved to server');
+  } finally {
+    endLoading();
   }
-  console.log('✅ Content saved to server');
 };
 
 // Content'i API'den veya localStorage'dan oku
 export const loadContent = async (): Promise<SiteContent> => {
+  startLoading();
   try {
     const response = await fetch(`${API_URL}/content`);
     if (!response.ok) throw new Error(String(response.status));
@@ -370,6 +377,8 @@ export const loadContent = async (): Promise<SiteContent> => {
     console.error('❌ Error loading content from server:', error);
     console.log('📝 Falling back to default content');
     return defaultContent;
+  } finally {
+    endLoading();
   }
 };
 

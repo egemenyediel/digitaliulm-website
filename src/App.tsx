@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Header } from "./components/Header";
+import { TopProgressBar } from "./components/TopProgressBar";
 import { VideoHero } from "./components/VideoHero";
 import { Solutions } from "./components/Solutions";
 import { References } from "./components/References";
@@ -66,9 +67,10 @@ export default function App() {
 
   // Ana sayfa
   return (
-    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
+      <TopProgressBar />
       {/* Video Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           key="background-video"
           className="absolute inset-0 w-full h-full object-cover"
@@ -78,11 +80,8 @@ export default function App() {
           playsInline
           preload="auto"
         >
-          <source src="https://digitaliulm.de/assets/jkj.mp4" type="video/mp4" />
+          <source src="/assets/jkj.mp4" type="video/mp4" />
         </video>
-        
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30" />
       </div>
 
       <Header currentLang={currentLang} onLanguageChange={setCurrentLang} />
