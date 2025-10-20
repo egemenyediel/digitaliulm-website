@@ -32,9 +32,20 @@ interface AdminPanelProps {
 
 type ContentType = 'hero' | 'solutions' | 'references' | 'contact';
 
+interface SaveResult {
+  status: 'success' | 'error' | null;
+  message: string;
+  timestamp: string;
+}
+
 export function AdminPanel({ onLogout }: AdminPanelProps) {
   const [activeTab, setActiveTab] = useState<ContentType>('hero');
   const [lastSaved, setLastSaved] = useState<string>('');
+  const [saveResult, setSaveResult] = useState<SaveResult>({
+    status: null,
+    message: '',
+    timestamp: ''
+  });
 
   // Hero Content
   const [heroContent, setHeroContent] = useState<HeroContent>({
@@ -78,10 +89,22 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
     try {
       await updateHeroContent(heroContent);
       setLastSaved(new Date().toISOString());
+      setSaveResult({
+        status: 'success',
+        message: '✅ Ana sayfa içeriği başarıyla kaydedildi!',
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.success('Ana sayfa içeriği başarıyla kaydedildi!', {
         description: 'Değişiklikler veritabanına gönderildi.',
       });
+      // 5 saniye sonra mesajı temizle
+      setTimeout(() => setSaveResult({ status: null, message: '', timestamp: '' }), 5000);
     } catch (error) {
+      setSaveResult({
+        status: 'error',
+        message: '❌ Hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.error('Hata oluştu!', {
         description: 'Ana sayfa kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
       });
@@ -92,10 +115,21 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
     try {
       await updateSolutions(solutions);
       setLastSaved(new Date().toISOString());
+      setSaveResult({
+        status: 'success',
+        message: `✅ ${solutions.length} çözüm başarıyla kaydedildi!`,
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.success('Çözümler başarıyla kaydedildi!', {
         description: `${solutions.length} çözüm veritabanına gönderildi.`,
       });
+      setTimeout(() => setSaveResult({ status: null, message: '', timestamp: '' }), 5000);
     } catch (error) {
+      setSaveResult({
+        status: 'error',
+        message: '❌ Hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.error('Hata oluştu!', {
         description: 'Çözümler kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
       });
@@ -106,10 +140,21 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
     try {
       await updateReferences(references);
       setLastSaved(new Date().toISOString());
+      setSaveResult({
+        status: 'success',
+        message: `✅ ${references.length} referans başarıyla kaydedildi!`,
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.success('Referanslar başarıyla kaydedildi!', {
         description: `${references.length} referans veritabanına gönderildi.`,
       });
+      setTimeout(() => setSaveResult({ status: null, message: '', timestamp: '' }), 5000);
     } catch (error) {
+      setSaveResult({
+        status: 'error',
+        message: '❌ Hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.error('Hata oluştu!', {
         description: 'Referanslar kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
       });
@@ -120,10 +165,21 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
     try {
       await updateContact(contactInfo);
       setLastSaved(new Date().toISOString());
+      setSaveResult({
+        status: 'success',
+        message: '✅ İletişim bilgileri başarıyla kaydedildi!',
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.success('İletişim bilgileri başarıyla kaydedildi!', {
         description: 'Değişiklikler veritabanına gönderildi.',
       });
+      setTimeout(() => setSaveResult({ status: null, message: '', timestamp: '' }), 5000);
     } catch (error) {
+      setSaveResult({
+        status: 'error',
+        message: '❌ Hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
+        timestamp: new Date().toLocaleString('tr-TR')
+      });
       toast.error('Hata oluştu!', {
         description: 'İletişim bilgileri kaydedilirken hata: ' + (error instanceof Error ? error.message : 'Bilinmeyen hata'),
       });
@@ -346,6 +402,26 @@ export function AdminPanel({ onLogout }: AdminPanelProps) {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
         <div className="max-w-6xl mx-auto">
+          {/* Save Result Banner */}
+          {saveResult.status && (
+            <div className={`mb-6 p-4 rounded-lg border-l-4 flex items-center justify-between ${
+              saveResult.status === 'success'
+                ? 'bg-green-900/20 border-green-500 text-green-100'
+                : 'bg-red-900/20 border-red-500 text-red-100'
+            }`}>
+              <div className="flex-1">
+                <p className="font-semibold text-lg">{saveResult.message}</p>
+                <p className="text-sm opacity-75">{saveResult.timestamp}</p>
+              </div>
+              <button
+                onClick={() => setSaveResult({ status: null, message: '', timestamp: '' })}
+                className="text-2xl opacity-50 hover:opacity-100 ml-4"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
