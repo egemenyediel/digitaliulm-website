@@ -55,5 +55,12 @@ import { fileURLToPath, URL } from 'node:url';  export default defineConfig({
     server: {
       port: 3000,
       open: true,
+      proxy: {
+        '/.netlify/functions': {
+          target: 'http://localhost:8888',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/\.netlify\/functions/, '/.netlify/functions'),
+        },
+      },
     },
   });

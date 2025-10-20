@@ -110,14 +110,27 @@ export const saveContent = async (content: SiteContent): Promise<void> => {
   startLoading();
   try {
     content.lastUpdated = new Date().toISOString();
-    const response = await fetch(`${API_URL}/content`, {
+    const url = `${API_URL}/content`;
+    console.log('[saveContent] Sending POST to:', url);
+    console.log('[saveContent] Content:', content);
+    
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(content),
     });
+    
+    console.log('[saveContent] Response status:', response.status);
+    console.log('[saveContent] Response OK:', response.ok);
+    
     if (!response.ok) {
-      throw new Error(`Failed to save content: ${response.status}`);
+      const errorText = await response.text();
+      console.error('[saveContent] Response error:', errorText);
+      throw new Error(`Failed to save content: ${response.status} - ${errorText}`);
     }
+    
+    const responseData = await response.json();
+    console.log('[saveContent] Response data:', responseData);
     console.log('✅ Content saved to database');
   } catch (error) {
     console.error('❌ Error saving content to database:', error);
@@ -131,10 +144,18 @@ export const saveContent = async (content: SiteContent): Promise<void> => {
 export const loadContent = async (): Promise<SiteContent> => {
   startLoading();
   try {
-    const response = await fetch(`${API_URL}/content`);
-    if (!response.ok) throw new Error(String(response.status));
+    const url = `${API_URL}/content`;
+    console.log('[loadContent] Fetching from:', url);
+    
+    const response = await fetch(url);
+    console.log('[loadContent] Response status:', response.status);
+    
+    if (!response.ok) {
+      throw new Error(String(response.status));
+    }
+    
     const content = await response.json();
-    console.log('✅ Content loaded from database');
+    console.log('✅ Content loaded from database:', content);
     return content;
   } catch (error) {
     console.error('❌ Error loading content from database:', error);
